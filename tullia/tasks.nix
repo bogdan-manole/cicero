@@ -6,10 +6,10 @@
   }: {
     preset = {
       nix.enable = true;
-      github-ci = __mapAttrs (_: lib.mkDefault) {
+      github-ci = __mapAttrs (_: lib.mkDefault) rec {
         enable = config.action.facts != {};
         repo = "input-output-hk/cicero";
-        sha = config.preset.github-ci.lib.getRevision "GitHub event" rev;
+        sha = config.preset.github-ci.lib.getRevision "GitHub Push to ${repo}" rev;
         clone = false;
       };
     };
@@ -22,7 +22,7 @@
   }:
     lib.escapeShellArg (
       if config.action.facts != {}
-      then "github:${config.preset.github-ci.repo}/${config.preset.github-ci.lib.getRevision "GitHub event" rev}"
+      then "github:${config.preset.github-ci.repo}/${config.preset.github-ci.lib.getRevision "GitHub Push to ${config.preset.github-ci.repo}" rev}"
       else "."
     );
 in {
