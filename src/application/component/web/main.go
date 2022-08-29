@@ -1,6 +1,7 @@
 package web
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -327,6 +328,7 @@ func (self *Web) Start(ctx context.Context) error {
 		return err
 	}
 	muxRouter.HandleFunc("/", self.IndexGet).Methods(http.MethodGet)
+	muxRouter.HandleFunc("/crash", self.CrashGet).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/invocation/{id}", self.InvocationIdGet).Methods(http.MethodGet)
 	muxRouter.HandleFunc("/run/{id}", self.RunIdDelete).Methods(http.MethodDelete)
 	muxRouter.HandleFunc("/run/{id}", self.RunIdGet).Methods(http.MethodGet)
@@ -371,6 +373,31 @@ func (self *Web) Start(ctx context.Context) error {
 
 func (self *Web) IndexGet(w http.ResponseWriter, req *http.Request) {
 	http.Redirect(w, req, "/action/current?active", http.StatusFound)
+}
+
+func (self *Web) CrashGet(w http.ResponseWriter, req *http.Request) {
+	if _, err := io.Copy(w, bytes.NewBuffer([]byte(`
+<html>
+	<body>
+		<h1>Oh no! 💥</h1>
+		<h2>
+			<p>
+				Something <em>unexpectedly</em> went wrong.
+			</p>
+			<p>
+				How could I debug that? 😰
+			</p>
+		</h2>
+	</body>
+</html>
+`))); err != nil {
+		self.ServerError(w, errors.WithMessage(err, "Something actually went wrong writing the response"))
+		return
+	}
+	go func() {
+		time.Sleep(1 * time.Second)
+		panic("crash")
+	}()
 }
 
 func (self *Web) ActionCurrentGet(w http.ResponseWriter, req *http.Request) {
