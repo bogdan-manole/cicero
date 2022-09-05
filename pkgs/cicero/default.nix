@@ -83,6 +83,7 @@
       '';
     };
 in
+  /*
   runCommandNoCC simple.name {
     requiredSystemFeatures = ["kvm"];
     inherit (simple) passthru;
@@ -90,3 +91,5 @@ in
     ln -s ${simple} $out
     ${schemathesisTest.driver}/bin/nixos-test-driver
   ''
+  */
+  simple
