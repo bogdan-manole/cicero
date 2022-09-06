@@ -27,6 +27,8 @@
 
       nativeBuildInputs = [go-mockery];
 
+      doCheck = false;
+
       preBuild = ''
         go generate ./...
       '';

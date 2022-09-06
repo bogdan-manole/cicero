@@ -18,8 +18,6 @@ import (
 	"github.com/input-output-hk/cicero/src/config"
 )
 
-//go:generate mockery --all --keeptree
-
 type StartCmd struct {
 	Components []string `arg:"positional,env:CICERO_COMPONENTS" help:"any of: nomad, web"`
 
